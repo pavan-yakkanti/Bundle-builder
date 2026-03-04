@@ -49,7 +49,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
 }
 
 .bundle-builder__title-container {
@@ -415,6 +414,9 @@
 .bundle-builder__review-container {
     width: 33.36%;
     flex-basis: 399px;
+    position: sticky;
+    top: 8rem;
+    height: fit-content;
 }
 
 .bundle-builder-review {

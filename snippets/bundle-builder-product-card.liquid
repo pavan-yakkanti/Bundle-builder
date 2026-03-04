@@ -38,16 +38,17 @@
       <h3 class="bundle-product-card__title">
         {{ product.title }}
       </h3>
-      <p class="bundle-product-card__description">
-        {{
-          product.description
-          | truncatewords: 10
-          | append: ' <a href="'
-          | append: product.url
-          | append: '">Learn more</a>'
-        }}
-      </p>
-
+      {%- if product.description != blank -%}
+        <p class="bundle-product-card__description">
+          {{
+            product.description
+            | truncatewords: 10
+            | append: ' <a href="'
+            | append: product.url
+            | append: '">Learn more</a>'
+          }}
+        </p>
+      {%- endif -%}
       <div class="bundle-product-card__variants">
         <div class="product-color-swatches">
           {%- for option in product.options_with_values -%}

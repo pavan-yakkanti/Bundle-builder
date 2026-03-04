@@ -115,19 +115,10 @@
     background: #4E2FD2;
 }
 
-/* .bundle-builder__step-collection-container {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    overflow: hidden;
-} */
-
 .bundle-builder__step-collection-and-next-button-container {
     height: 0;
     overflow: hidden;
+    transition: height 1s ease
 }
 
 .bundle-builder__step-container.is-open {
@@ -277,7 +268,7 @@
 
 .product-color-swatches .product-color-swatch.selected {
     background: #1DF0BB0A;
-    border: 0.5px soid #0AA288;
+    border: 0.5px solid #0AA288;
 }
 
 .bundle-product-card__variants {
@@ -659,7 +650,7 @@
     }
 
     .bundle-builder__step-collection-container {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(1, 1fr);
     }
     
     .bundle-builder__container {

@@ -1,0 +1,358 @@
+{%- liquid
+  assign bundle_has_collection = false
+  for block in section.blocks
+    if block.settings.collection != blank
+      assign bundle_has_collection = true
+      break
+    endif
+  endfor
+-%}
+
+{%- if section.blocks.size > 1 and bundle_has_collection -%}
+  {{ 'bundle-builder.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'bundle-builder.js' | asset_url }}" defer></script>
+
+  {%- style -%}
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.top_padding }}px;
+      padding-bottom: {{ section.settings.bottom_padding }}px;
+    }
+  {%- endstyle -%}
+  {%- liquid
+    assign heading = section.settings.heading
+    assign heading_alignment = section.settings.heading_alignment
+    assign block_title_alignment = section.settings.block_title_alignment
+    assign review_sub_heading = section.settings.review_sub_heading
+    assign review_heading = section.settings.review_heading
+    assign review_description = section.settings.review_description
+    assign shipping_icon = section.settings.shipping_icon
+    assign shipping_text = section.settings.shipping_text
+    assign discount_image = section.settings.discount_image
+  -%}
+  <bundle-builder class="bundle-builder section-{{ section.id }}-padding">
+    <div class="page-width">
+      {%- if heading != blank -%}
+        <h2 class="bundle-builder__heading bundle-builder__heading--{{ heading_alignment }}">
+          {{ heading }}
+        </h2>
+      {%- endif -%}
+      <div class="bundle-builder__container">
+        <div class="bundle-builder__steps">
+          {%- for block in section.blocks -%}
+            {%- assign block_index = forloop.index -%}
+            {%- assign review_block_title = block.settings.title_to_show_in_review -%}
+            {%- assign current_collection = block.settings.collection -%}
+            {%- assign title_icon = block.settings.title_icon -%}
+            {%- if current_collection != blank and block.settings.title != blank -%}
+              {%- assign has_products = false -%}
+              {%- if current_collection != blank and current_collection.products.size > 0 -%}
+                {%- assign has_products = true -%}
+              {%- endif -%}
+              {%- if has_products -%}
+                <div
+                  class="bundle-builder__step-container {% if forloop.index == 1 %} is-open{% endif %}"
+                  data-block-index="{{ forloop.index }}"
+                >
+                  <div class="bundle-builder__step-text-container {{ block.shopify_attributes }}">
+                    <p class="bundle-builder__step-text">STEP {{ forloop.index }} OF {{ forloop.length }}</p>
+                  </div>
+                  <div class="bundle-builder__title-and-products-container">
+                    <div class="bundle-builder__title-and-selected-count-container">
+                      <div class="bundle-builder__title-container bundle-builder__title-container--{{ block_title_alignment }}">
+                        <div class="bundle-builder__title-icon-container">
+                          {%- if title_icon != blank -%}
+                            {{ title_icon | image_url: width: 200 | image_tag: alt: title_icon.title }}
+                          {% else %}
+                            {{ 'product-1' | placeholder_svg_tag }}
+                          {%- endif -%}
+                        </div>
+                        <h3 class="bundle-builder__step-title">{{ block.settings.title }}</h3>
+                      </div>
+                      <div class="bundle-builder__selected-count-and-dropdown-icon-container">
+                        <div
+                          class="bundle-builder__selected-count"
+                          data-block-selected-count-index="{{ forloop.index }}"
+                        ></div>
+                        <div class="bundle-builder__dropdown-icon" data-block-dropdown-icon-index="{{ forloop.index }}">
+                          {%- render 'icons', icon: 'dropdown-arrow' -%}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="bundle-builder__step-collection-and-next-button-container">
+                      <ul class="bundle-builder__step-collection-container">
+                        {%- for each_product in current_collection.products -%}
+                          <li class="bundle-product-card-wrapper">
+                            {%- render 'bundle-builder-product-card',
+                              product: each_product,
+                              block_index: block_index,
+                              block_title: review_block_title
+                            -%}
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                      {%- if block.settings.next_button_text != blank -%}
+                        {% assign next_button_alignment = section.settings.next_button_alignment %}
+                        <div
+                          class="bundle-builder__step-next-button-container bundle-builder__step-next-button-container--{{ next_button_alignment }}"
+                          data-block-next-button-index="{{ forloop.index }}"
+                        >
+                          <button type="button" class="bundle-builder__step-next-button">
+                            {{ block.settings.next_button_text }}
+                          </button>
+                        </div>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                </div>
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        <div class="bundle-builder__review-container">
+          <bundle-builder-review class="bundle-builder-review">
+            {%- if review_sub_heading != blank -%}
+              <p class="bundle-builder-review__sub-heading">{{ review_sub_heading }}</p>
+            {%- endif -%}
+            {%- if review_heading != blank -%}
+              <h3 class="bundle-builder-review__heading">{{ review_heading }}</h3>
+            {%- endif -%}
+            {%- if review_description != blank -%}
+              <p class="bundle-builder-review__description">{{ review_description }}</p>
+            {%- endif -%}
+            <div class="bundle-builder__review-selected-products-list"></div>
+            <div class="bundle-builder__review-shipping">
+              {%- if shipping_icon != blank -%}
+                {{ shipping_icon | image_url: width: 200 | image_tag: alt: shipping_icon.title }}
+              {% else %}
+                {{ 'product-1' | placeholder_svg_tag }}
+              {%- endif -%}
+              <div class="bundle-builder__review-shipping-text">{{ shipping_text }}</div>
+              <div class="bundle-builder__review-shipping-price-container">
+                <div class="bundle-builder__review-shipping-price"><s>$5.99</s></div>
+                <div class="bundle-builder__review-shipping-free">FREE</div>
+              </div>
+            </div>
+            <div class="bundle-builder__review-bottom">
+              <div class="bundle-builder__review-discount-image-and-total-price-container">
+                <div class="bundle-builder__review-discount-image">
+                  {%- if discount_image != blank -%}
+                    {{ discount_image | image_url: width: 200 | image_tag: alt: shipping_discount_imageicon.title }}
+                  {% else %}
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  {%- endif -%}
+                </div>
+                <div class="bundle-builder__review-emi-and-total-price-container">
+                  <div class="bundle-builder__review-emi">as low as $19.19/mo</div>
+                  <div class="bundle-builder__review-total-price-container">
+                    <div class="bundle-builder__review-subtotal-price"></div>
+                    <div class="bundle-builder__review-total-price"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="bundle-builder__review-savings-text">
+                Congrats! You’re saving $50.92 on your security bundle!
+              </div>
+              <button type="button" class="bundle-builder__review-checkout-button">Checkout</button>
+              <a href="#" class="bundle-builder__review-save-text">Save my system for later</a>
+            </div>
+          </bundle-builder-review>
+        </div>
+      </div>
+    </div>
+  </bundle-builder>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Bundle Builder",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Bundle Builder"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "block_title_alignment",
+      "label": "Block Title Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "next_button_alignment",
+      "label": "Next button Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Review block settings"
+    },
+    {
+      "type": "text",
+      "id": "review_sub_heading",
+      "label": "Sub heading",
+      "default": "REVIEW"
+    },
+    {
+      "type": "text",
+      "id": "review_heading",
+      "label": "Heading",
+      "default": "Your security system"
+    },
+    {
+      "type": "text",
+      "id": "review_description",
+      "label": "Desscription",
+      "default": "Review your personalized protection system designed to keep what matters most safe."
+    },
+    {
+      "type": "image_picker",
+      "id": "shipping_icon",
+      "label": "Shipping icon",
+      "info": "Recommended dimensions 200px X 200px"
+    },
+    {
+      "type": "image_picker",
+      "id": "discount_image",
+      "label": "Discount image",
+      "info": "Recommended dimensions 200px X 200px"
+    },
+    {
+      "type": "text",
+      "id": "shipping_text",
+      "label": "Shipping text",
+      "default": "Fast Shipping"
+    },
+    {
+      "type": "header",
+      "content": "Section padding settings"
+    },
+    {
+      "type": "range",
+      "id": "top_padding",
+      "min": 20,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "bottom_padding",
+      "min": 20,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "title_icon",
+          "label": "Title icon"
+        },
+        {
+          "type": "text",
+          "label": "Title",
+          "id": "title",
+          "default": "Choose your cameras"
+        },
+        {
+          "type": "text",
+          "label": "Title to be shown in Review",
+          "id": "title_to_show_in_review",
+          "default": "Cameras",
+          "info": "This title will be visible in the review section to show the product belongs to the specific block"
+        },
+        {
+          "type": "collection",
+          "label": "Collection",
+          "id": "collection"
+        },
+        {
+          "type": "text",
+          "id": "next_button_text",
+          "label": "Next button text",
+          "default": "Next choose your plan"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bundle Builder",
+      "category": "custom",
+      "blocks": [
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -62,7 +62,7 @@
         "id": "max_page_width",
         "min": 1200,
         "max": 1800,
-        "step": 100,
+        "step": 20,
         "default": 1600,
         "unit": "px",
         "label": "t:labels.page_width"

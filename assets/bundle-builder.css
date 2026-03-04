@@ -431,6 +431,7 @@
 /* Review block css start */
 .bundle-builder__review-container {
     width: 33.36%;
+    flex-basis: 399px;
 }
 
 .bundle-builder-review {

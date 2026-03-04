@@ -85,9 +85,9 @@ class BundleBuilder extends HTMLElement {
     });
   }
 }
-
-customElements.define('bundle-builder', BundleBuilder);
-
+if (!customElements.get('bundle-builder')) {
+  customElements.define('bundle-builder', BundleBuilder);
+}
 
 class BundleBuilderProductCard extends HTMLElement {
   constructor() {
@@ -191,9 +191,7 @@ class BundleBuilderProductCard extends HTMLElement {
       comparePrice &&
       comparePrice !== price;
 
-    // ---------------------------
     // CASE 1: Variant HAS compare price
-    // ---------------------------
     if (hasCompare) {
       if (saleContainer) {
         // Structure already exists → just update
@@ -214,9 +212,7 @@ class BundleBuilderProductCard extends HTMLElement {
       }
     }
 
-    // ---------------------------
     // CASE 2: Variant has NO compare price
-    // ---------------------------
     else {
       if (normalContainer) {
         normalContainer.textContent = price;
@@ -266,19 +262,6 @@ class BundleBuilderProductCard extends HTMLElement {
     this.dispatchBundleUpdate();
   }
 
-  // updateQuantity(change) {
-  //   let newQty = this.quantity + change;
-  //   if (newQty < 0) newQty = 0;
-
-  //   this.quantity = newQty;
-  //   this.qtyInput.value = newQty;
-
-  //   this.persist();
-  //   this.updateQtyUI();
-  //   this.updateBlockSelectedCount();
-  //   this.dispatchBundleUpdate();
-  // }
-
   updateQuantity(value, absolute = false) {
     let newQty;
 
@@ -327,7 +310,7 @@ class BundleBuilderProductCard extends HTMLElement {
 
   persist() {
     if (!this.currentVariant) return;
-
+    this.bundleData = this.getSessionData();
     let block = this.bundleData.find(
       (b) => b.blockIndex === this.blockIndex
     );
@@ -453,10 +436,12 @@ class BundleBuilderProductCard extends HTMLElement {
   }
 }
 
-customElements.define(
-  'bundle-builder-product-card',
-  BundleBuilderProductCard
-);
+if (!customElements.get('bundle-builder-product-card')) {
+  customElements.define(
+    'bundle-builder-product-card',
+    BundleBuilderProductCard
+  );
+}
 
 class BundleBuilderReview extends HTMLElement {
   constructor() {
@@ -757,8 +742,9 @@ class BundleBuilderReview extends HTMLElement {
     );
   }
 }
-
-customElements.define(
-  'bundle-builder-review',
-  BundleBuilderReview
-);
+if (!customElements.get('bundle-builder-review')) {
+  customElements.define(
+    'bundle-builder-review',
+    BundleBuilderReview
+  );
+}

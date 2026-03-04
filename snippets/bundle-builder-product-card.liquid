@@ -1,0 +1,146 @@
+<bundle-builder-product-card
+  class="bundle-product-card"
+  data-product-id="{{ product.id }}"
+  data-product-handle="{{ product.handle }}"
+  data-block-index="{{ block_index }}"
+  data-block-title="{{ block_title }}"
+>
+  <div class="bundle-product-card__inner">
+    {% if product.compare_at_price > product.price %}
+      <div class="bundle-product-card__badge">
+        Save {{ product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price }}%
+      </div>
+    {% endif %}
+
+    <div class="bundle-product-card__image-wrapper">
+      <img
+        srcset="
+          {% if product.featured_image.width >= 350 %}{{ product.featured_image | image_url: width: 350 }} 350w,{% endif %}
+          {% if product.featured_image.width >= 750 %}{{ product.featured_image | image_url: width: 750 }} 750w,{% endif %}
+          {% if product.featured_image.width >= 1100 %}{{ product.featured_image | image_url: width: 1100 }} 1100w,{% endif %}
+          {% if product.featured_image.width >= 1500 %}{{ product.featured_image | image_url: width: 1500 }} 1500w,{% endif %}
+          {% if product.featured_image.width >= 2200 %}{{ product.featured_image | image_url: width: 2200 }} 2200w,{% endif %}
+          {% if product.featured_image.width >= 3000 %}{{ product.featured_image | image_url: width: 3000 }} 3000w,{% endif %}
+          {{ product.featured_image | image_url }} {{ product.featured_image.width }}w
+        "
+        sizes="236px"
+        src="{{ product.featured_image | image_url: width: 1100 }}"
+        loading="eager"
+        fetchpriority="high"
+        width="{{ product.featured_image.width }}"
+        height="{{ product.featured_image.height }}"
+        alt="{{ product.featured_image.alt | escape }}"
+        class="article-template__hero-image"
+      >
+      <a href="{{ product.url }}" class="bundle-product-card__link"></a>
+    </div>
+    <div class="bundle-product-card__info">
+      <h3 class="bundle-product-card__title">
+        {{ product.title }}
+      </h3>
+      {%- if product.description != blank -%}
+        <p class="bundle-product-card__description">
+          {{
+            product.description
+            | truncatewords: 10
+            | append: ' <a href="'
+            | append: product.url
+            | append: '">Learn more</a>'
+          }}
+        </p>
+      {%- endif -%}
+      <div class="bundle-product-card__variants">
+        <div class="product-color-swatches">
+          {%- for option in product.options_with_values -%}
+            {%- if option.name == 'Color' -%}
+              {%- for value in option.values -%}
+                {%- for variant in product.variants -%}
+                  {%- if variant.options contains value -%}
+                    <span
+                      class="product-color-swatch"
+                      {%- if variant.featured_image -%}
+                        src="{{ variant.featured_image | image_url: width: 800 }}"
+                        srcset="{{ variant.featured_image | image_url: width: 800 }} 1x, {{ variant.featured_image | image_url: width: 1600 }} 2x"
+                      {%- endif -%}
+                      title="{{ value }}"
+                      data-variant-id="{{ variant.id }}"
+                      data-swatch-color="{{ value | handleize }}"
+                    >
+                      {%- liquid
+                        assign variant_image = null
+                        if variant.featured_image != null
+                          assign variant_image = variant.featured_image
+                        else
+                          assign variant_image = product.featured_image
+                        endif
+                      -%}
+                      <span class="bundle-product-card__variant-image">
+                        {{
+                          variant_image
+                          | image_url: width: variant_image.width
+                          | image_tag:
+                            width: variant_image.width,
+                            height: variant_image.height,
+                            alt: variant_image.alt,
+                            class: 'data-variant-image'
+                        }}
+                      </span>
+                      <span class="bundle-product-card__variant-title">
+                        {{ value }}
+                      </span>
+                    </span>
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endfor -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+      <div class="bundle-product-card__quantity-and-price-container">
+        <div class="bundle-product-card__quantity">
+          <button type="button" class="bundle-product-card__qty-btn" data-qty-minus>-</button>
+          <input type="number" class="bundle-product-card__qty-input" value="0" min="0" data-qty-input>
+          <button type="button" class="bundle-product-card__qty-btn" data-qty-plus>+</button>
+        </div>
+
+        <div class="bundle-product-card__price">
+          {% if product.compare_at_price > product.price %}
+            <span class="bundle-product-card__sale-price-container">
+              <s class="price price--compare bundle-product-card__compare-at-price">
+                {{ product.compare_at_price | money }}
+              </s>
+              <span class="price price--sale bundle-product-card__sale-price">{{ product.price | money }}</span>
+            </span>
+          {% else %}
+            <span class="price bundle-product-card__price-container">{{ product.price | money }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="application/json" data-product-json>
+    {
+      "productId": {{ product.id | json }},
+      "productHandle": {{ product.handle | json }},
+      "productUrl": {{ product.url | json }},
+      "productImage": {{ product.featured_image | image_url: width: 1100 | json }},
+      "blockIndex": {{ block_index | json }},
+      "blockTitle": {{ block_title | json }},
+      "variants": [
+        {% for variant in product.variants %}
+        {
+          "variantId": {{ variant.id | json }},
+          "variantTitle": {{ variant.title | json }},
+          "variantPrice": {{ variant.price | money | json }},
+          "variantPriceRaw": {{ variant.price | json }},
+          "variantCompareAtPrice": {{ variant.compare_at_price | money | json }},
+          "variantCompareAtPriceRaw": {{ variant.compare_at_price | json }},
+          "variantImage": {{ variant.featured_image.src | json }},
+          "variantUrl": {{ variant.url | json }}
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+    }
+  </script>
+</bundle-builder-product-card>

@@ -30,6 +30,72 @@
         "endorsement_name": ""
       }
     },
+    "bundle_builder_VCpWWK": {
+      "type": "bundle-builder",
+      "blocks": {
+        "collection_9dwkbx": {
+          "type": "collection",
+          "settings": {
+            "title_icon": "shopify://shop_images/livestream.svg",
+            "title": "Choose your cameras",
+            "title_to_show_in_review": "CAMERAS",
+            "collection": "best-sellers",
+            "next_button_text": "Next choose your plan"
+          }
+        },
+        "collection_hpMxEW": {
+          "type": "collection",
+          "settings": {
+            "title_icon": "shopify://shop_images/logo_hms_new_1.png",
+            "title": "Choose your sensors",
+            "title_to_show_in_review": "SENSORS",
+            "collection": "daily-deals",
+            "next_button_text": "Next choose your plan"
+          }
+        },
+        "collection_zBdUfC": {
+          "type": "collection",
+          "settings": {
+            "title_icon": "shopify://shop_images/Group_1417.png",
+            "title": "Choose your accessories",
+            "title_to_show_in_review": "ACCESSORIES",
+            "collection": "featured-collection",
+            "next_button_text": "Next choose your plan"
+          }
+        },
+        "collection_WnPLV7": {
+          "type": "collection",
+          "settings": {
+            "title_icon": "shopify://shop_images/Frame_1419.png",
+            "title": "Choose your plan",
+            "title_to_show_in_review": "PLAN",
+            "collection": "new-arrivals",
+            "next_button_text": ""
+          }
+        }
+      },
+      "block_order": [
+        "collection_9dwkbx",
+        "collection_hpMxEW",
+        "collection_zBdUfC",
+        "collection_WnPLV7"
+      ],
+      "name": "Bundle Builder",
+      "settings": {
+        "heading": "",
+        "heading_alignment": "center",
+        "block_title_alignment": "left",
+        "next_button_alignment": "center",
+        "review_sub_heading": "REVIEW",
+        "review_heading": "Your security system",
+        "review_description": "Review your personalized protection system designed to keep what matters most safe.",
+        "shipping_icon": "shopify://shop_images/Wyze_Sense_Keypad.png",
+        "discount_image": "shopify://shop_images/Satisfaction_Badge-05_1.png",
+        "shipping_text": "Fast Shipping",
+        "top_padding": 48,
+        "bottom_padding": 48
+      }
+    },
     "featured_collections_hhETJ9": {
       "type": "featured-collections",
       "blocks": {
@@ -183,6 +249,7 @@
   },
   "order": [
     "hero_1",
+    "bundle_builder_VCpWWK",
     "featured_collections_hhETJ9",
     "selling_points_v2_6NgzaK",
     "product_highlights_gUaG6E"

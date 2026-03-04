@@ -79,6 +79,22 @@ class BundleBuilder extends HTMLElement {
 
       if (blockIndex === index) {
         block.classList.add('is-open');
+        const productsContainer = block.querySelector('.bundle-builder__step-collection-container');
+
+        if (productsContainer) {
+          requestAnimationFrame(() => {
+            const height = productsContainer.scrollHeight;
+            productsContainer.style.height = height + "px";
+
+            // Wait one more frame AFTER height is applied
+            requestAnimationFrame(() => {
+              block.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+              });
+            });
+          });
+        }
       } else {
         block.classList.remove('is-open');
       }

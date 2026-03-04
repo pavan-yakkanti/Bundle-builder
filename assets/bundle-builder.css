@@ -93,7 +93,8 @@
 }
 
 .bundle-builder__dropdown-icon {
-    rotate: 180deg;
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
 }
 
 .bundle-builder__step-next-button-container {
@@ -123,6 +124,7 @@
 
 .bundle-builder__step-container.is-open {
     background: #F4F8FF;
+    scroll-margin-top: 80px;
 }
 
 .bundle-builder__step-container.is-open .bundle-builder__step-collection-and-next-button-container {
@@ -130,7 +132,9 @@
 }
 
 .bundle-builder__step-container.is-open .bundle-builder__dropdown-icon {
-    rotate: 0deg;
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
+    will-change: transform;
 }
 
 .bundle-builder__title-icon-container {

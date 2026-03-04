@@ -381,12 +381,11 @@ class BundleBuilderProductCard extends HTMLElement {
     if (!block) return;
 
     const totalSelected = block.products.reduce((sum, product) => {
-      return (
-        sum +
-        product.variants.reduce((variantSum, variant) => {
-          return variantSum + (variant.variantQuantity || 0);
-        }, 0)
+      const hasSelectedVariant = product.variants.some(
+        (variant) => (variant.variantQuantity || 0) > 0
       );
+
+      return sum + (hasSelectedVariant ? 1 : 0);
     }, 0);
 
     const countElement = document.querySelector(

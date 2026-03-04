@@ -163,6 +163,74 @@ class BundleBuilderProductCard extends HTMLElement {
     });
   }
 
+  updateProductCardPrice() {
+    if (!this.currentVariant) return;
+
+    const comparePrice =
+      this.currentVariant.variantCompareAtPrice;
+    const price =
+      this.currentVariant.variantPrice;
+
+    const saleContainer = this.querySelector(
+      '.bundle-product-card__sale-price-container'
+    );
+
+    const compareEl = this.querySelector(
+      '.bundle-product-card__compare-at-price'
+    );
+
+    const salePriceEl = this.querySelector(
+      '.bundle-product-card__sale-price'
+    );
+
+    const normalContainer = this.querySelector(
+      '.bundle-product-card__price-container'
+    );
+
+    const hasCompare =
+      comparePrice &&
+      comparePrice !== price;
+
+    // ---------------------------
+    // CASE 1: Variant HAS compare price
+    // ---------------------------
+    if (hasCompare) {
+      if (saleContainer) {
+        // Structure already exists → just update
+        if (compareEl) compareEl.textContent = comparePrice;
+        if (salePriceEl) salePriceEl.textContent = price;
+      } else if (normalContainer) {
+        // Switch from normal → sale structure
+        normalContainer.outerHTML = `
+          <span class="bundle-product-card__sale-price-container">
+            <s class="price price--compare bundle-product-card__compare-at-price">
+              ${comparePrice}
+            </s>
+            <span class="price price--sale bundle-product-card__sale-price">
+              ${price}
+            </span>
+          </span>
+        `;
+      }
+    }
+
+    // ---------------------------
+    // CASE 2: Variant has NO compare price
+    // ---------------------------
+    else {
+      if (normalContainer) {
+        normalContainer.textContent = price;
+      } else if (saleContainer) {
+        // Switch from sale → normal structure
+        saleContainer.outerHTML = `
+          <span class="price bundle-product-card__price-container">
+            ${price}
+          </span>
+        `;
+      }
+    }
+  }
+
   selectVariantById(variantId) {
     this.currentVariant = this.variantsData.find(
       (v) => String(v.variantId) === String(variantId)
@@ -192,6 +260,7 @@ class BundleBuilderProductCard extends HTMLElement {
     this.qtyInput.value = this.quantity;
 
     this.updateQtyUI();
+    this.updateProductCardPrice();
     this.persist();
     this.updateBlockSelectedCount();
     this.dispatchBundleUpdate();

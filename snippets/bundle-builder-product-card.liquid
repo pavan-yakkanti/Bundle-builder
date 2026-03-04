@@ -61,9 +61,6 @@
                         src="{{ variant.featured_image | image_url: width: 800 }}"
                         srcset="{{ variant.featured_image | image_url: width: 800 }} 1x, {{ variant.featured_image | image_url: width: 1600 }} 2x"
                       {%- endif -%}
-                      {%- unless swatch_type == 'image' -%}
-                        style="background-color: {{ value | handleize }};"
-                      {%- endunless -%}
                       title="{{ value }}"
                       data-variant-id="{{ variant.id }}"
                       data-swatch-color="{{ value | handleize }}"

@@ -369,8 +369,11 @@ class BundleBuilderProductCard extends HTMLElement {
 
     variant.variantQuantity = this.quantity;
     variant.variantPrice = this.currentVariant.variantPrice;
+    variant.variantPriceRaw = this.currentVariant.variantPriceRaw;
     variant.variantCompareAtPrice =
       this.currentVariant.variantCompareAtPrice;
+    variant.variantCompareAtPriceRaw =
+      this.currentVariant.variantCompareAtPriceRaw;
     variant.variantImage = this.currentVariant.variantImage;
     variant.variantUrl = this.currentVariant.variantUrl;
     variant.variantTitle = this.currentVariant.variantTitle;
@@ -529,7 +532,7 @@ class BundleBuilderReview extends HTMLElement {
 
       this.container.appendChild(blockWrapper);
     });
-    // this.updateReviewTotals();
+    this.updateReviewTotals();
   }
 
   createVariantRow(block, variant) {
@@ -672,13 +675,9 @@ class BundleBuilderReview extends HTMLElement {
       sessionStorage.getItem('bundleBuilderData')
     ) || [];
 
-    const subtotalEl = this.querySelector(
-      '.bundle-builder__review-subtotal-price'
-    );
-
-    const totalEl = this.querySelector(
-      '.bundle-builder__review-total-price'
-    );
+    const subtotalEl = this.querySelector('.bundle-builder__review-subtotal-price');
+    const totalEl = this.querySelector('.bundle-builder__review-total-price');
+    const savingsEl = this.querySelector('.bundle-builder__review-savings-text');
 
     if (!totalEl) return;
 
@@ -691,42 +690,37 @@ class BundleBuilderReview extends HTMLElement {
           const qty = variant.variantQuantity || 0;
 
           if (qty > 0) {
-            totalPriceRaw +=
-              (variant.variantPriceRaw || 0) * qty;
-
-            totalCompareRaw +=
-              (variant.variantComparePriceRaw || 0) * qty;
+            totalPriceRaw += (variant.variantPriceRaw || 0) * qty;
+            totalCompareRaw += (variant.variantCompareAtPriceRaw || 0) * qty;
           }
         });
       });
     });
 
-    // Convert from raw (cents)
-    const totalPrice = totalPriceRaw / 100;
-    const totalCompare = totalCompareRaw / 100;
+    const formatMoney = (amount) => `$${amount.toFixed(2)}`;
 
-    // Get currency symbol from Shopify
-    const currencySymbol =
-      window?.Shopify?.currency?.active ||
-      window?.Shopify?.shop?.currency ||
-      '';
+    totalEl.textContent = formatMoney(totalPriceRaw / 100);
 
-    // Format helper
-    const formatMoney = (amount) =>
-      `${currencySymbol} ${amount.toFixed(2)}`;
-
-    // Set total price
-    totalEl.textContent = formatMoney(totalPrice);
-
-    // Show compare price only if greater than total
     if (subtotalEl) {
-      if (totalCompare > totalPrice) {
-        subtotalEl.textContent =
-          formatMoney(totalCompare);
+      if (totalCompareRaw > 0) {
+        subtotalEl.textContent = formatMoney(totalCompareRaw / 100);
         subtotalEl.style.display = '';
       } else {
         subtotalEl.textContent = '';
         subtotalEl.style.display = 'none';
+      }
+    }
+
+    if (savingsEl) {
+      const savingsRaw = totalCompareRaw;
+
+      if (savingsRaw > 0) {
+        savingsEl.textContent =
+          `Congrats! You’re saving ${formatMoney(savingsRaw / 100)} on your security bundle!`;
+        savingsEl.style.display = '';
+      } else {
+        savingsEl.textContent = '';
+        savingsEl.style.display = 'none';
       }
     }
   }

@@ -82,7 +82,7 @@
       ],
       "name": "Bundle Builder",
       "settings": {
-        "heading": "Bundle Builder",
+        "heading": "",
         "heading_alignment": "center",
         "block_title_alignment": "left",
         "next_button_alignment": "center",
